@@ -25,21 +25,31 @@ def driver():
     Pytest fixture to set up and tear down Firefox WebDriver
     Configured for headless mode to run in Docker/Jenkins
     """
+    import os
     from selenium.webdriver.firefox.options import Options
     from selenium.webdriver.firefox.service import Service
+    
+    # Set environment variable for headless Firefox
+    os.environ['MOZ_HEADLESS'] = '1'
     
     firefox_options = Options()
     
     # Essential options for headless Firefox
-    if HEADLESS:
-        firefox_options.add_argument("--headless")
+    firefox_options.add_argument('-headless')
     
-    # Set window size
-    firefox_options.add_argument(f"--width={WINDOW_SIZE.split(',')[0]}")
-    firefox_options.add_argument(f"--height={WINDOW_SIZE.split(',')[1]}")
+    # Additional preferences for Docker environment
+    firefox_options.set_preference('browser.privatebrowsing.autostart', False)
     
-    # Create service with explicit path
-    service = Service(executable_path="/usr/local/bin/geckodriver")
+    # Set window size using preferences
+    width, height = WINDOW_SIZE.split(',')
+    firefox_options.set_preference('browser.window.width', int(width))
+    firefox_options.set_preference('browser.window.height', int(height))
+    
+    # Create service with explicit path and log
+    service = Service(
+        executable_path="/usr/local/bin/geckodriver",
+        log_output="/tmp/geckodriver.log"
+    )
     
     # Initialize Firefox driver with service
     driver = webdriver.Firefox(service=service, options=firefox_options)
