@@ -14,21 +14,19 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
+        stage('Run Tests with Selenium Grid') {
             steps {
                 script {
-                    docker.build('selenium-tests:latest')
+                    // Use docker-compose to orchestrate Selenium Grid and tests
+                    sh 'docker-compose up --build --abort-on-container-exit --exit-code-from tests'
                 }
             }
-        }
-        
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Run tests in Docker container with Firefox
-                    docker.image('selenium-tests:latest').inside('--network=host') {
-                        sh 'pytest -v --html=report.html --self-contained-html tests/'
-                    }
+            post {
+                always {
+                    // Copy report from container
+                    sh 'docker cp $(docker-compose ps -q tests):/app/report.html . || true'
+                    // Clean up containers
+                    sh 'docker-compose down -v'
                 }
             }
         }

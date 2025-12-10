@@ -22,37 +22,30 @@ from config.config import (
 @pytest.fixture(scope="function")
 def driver():
     """
-    Pytest fixture to set up and tear down Firefox WebDriver
-    Configured for headless mode to run in Docker/Jenkins
+    Pytest fixture to set up and tear down Chrome WebDriver
+    Uses Selenium Grid for reliable headless execution
     """
     import os
-    from selenium.webdriver.firefox.options import Options
-    from selenium.webdriver.firefox.service import Service
+    from selenium.webdriver.chrome.options import Options
     
-    # Set environment variable for headless Firefox
-    os.environ['MOZ_HEADLESS'] = '1'
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument(f'--window-size={WINDOW_SIZE}')
     
-    firefox_options = Options()
+    # Check if we should use Selenium Grid (remote)
+    selenium_remote_url = os.getenv('SELENIUM_REMOTE_URL')
     
-    # Essential options for headless Firefox
-    firefox_options.add_argument('-headless')
-    
-    # Additional preferences for Docker environment
-    firefox_options.set_preference('browser.privatebrowsing.autostart', False)
-    
-    # Set window size using preferences
-    width, height = WINDOW_SIZE.split(',')
-    firefox_options.set_preference('browser.window.width', int(width))
-    firefox_options.set_preference('browser.window.height', int(height))
-    
-    # Create service with explicit path and log
-    service = Service(
-        executable_path="/usr/local/bin/geckodriver",
-        log_output="/tmp/geckodriver.log"
-    )
-    
-    # Initialize Firefox driver with service
-    driver = webdriver.Firefox(service=service, options=firefox_options)
+    if selenium_remote_url:
+        # Use Selenium Grid
+        driver = webdriver.Remote(
+            command_executor=selenium_remote_url,
+            options=chrome_options
+        )
+    else:
+        # Fallback to local Chrome (for local testing)
+        driver = webdriver.Chrome(options=chrome_options)
     
     # Set timeouts
     driver.implicitly_wait(IMPLICIT_WAIT)
