@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     // Run tests in Docker container
-                    docker.image('selenium-tests:latest').inside('--network=host') {
+                    docker.image('selenium-tests:latest').inside('--privileged --cap-add=SYS_ADMIN --network=host') {
                         sh 'pytest -v --html=report.html --self-contained-html tests/'
                     }
                 }

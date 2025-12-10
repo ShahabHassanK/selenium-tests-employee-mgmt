@@ -24,7 +24,7 @@ from config.config import (
 def driver():
     """
     Pytest fixture to set up and tear down Chrome WebDriver
-    Configured for headless mode to run in Docker/Jenkins
+    Configured for headless mode to run in Docker/Jenkins with privileged mode
     """
     from selenium.webdriver.chrome.service import Service
     
@@ -34,23 +34,10 @@ def driver():
     if HEADLESS:
         chrome_options.add_argument("--headless=new")
     
-    # Critical options for running in Docker as non-root user
+    # Minimal options for privileged Docker container
     chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-setuid-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--disable-software-rasterizer")
-    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
-    chrome_options.add_argument("--user-data-dir=/tmp/chrome-user-data")
     chrome_options.add_argument(f"--window-size={WINDOW_SIZE}")
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    chrome_options.add_argument("--remote-debugging-port=9222")
-    chrome_options.add_argument("--disable-background-networking")
-    chrome_options.add_argument("--disable-background-timer-throttling")
-    chrome_options.add_argument("--disable-backgrounding-occluded-windows")
-    chrome_options.add_argument("--disable-renderer-backgrounding")
-    chrome_options.add_argument("--disable-ipc-flooding-protection")
     
     # Set binary location explicitly
     chrome_options.binary_location = "/usr/bin/google-chrome"
