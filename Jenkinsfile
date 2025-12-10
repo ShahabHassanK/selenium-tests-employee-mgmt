@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/YOUR_USERNAME/selenium-tests-employee-mgmt.git'
+                    url: 'https://github.com/ShahabHassanK/selenium-tests-employee-mgmt.git'
             }
         }
         
@@ -61,7 +61,7 @@ pipeline {
                     <hr>
                     <p>Triggered by: ${env.GIT_COMMITTER_EMAIL}</p>
                 """,
-                to: '${GIT_COMMITTER_EMAIL}',
+                to: 'shahab.hassan2020@gmail.com',
                 mimeType: 'text/html',
                 attachLog: true
             )
