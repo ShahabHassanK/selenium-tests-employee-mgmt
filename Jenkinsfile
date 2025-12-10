@@ -17,16 +17,16 @@ pipeline {
         stage('Run Tests with Selenium Grid') {
             steps {
                 script {
-                    // Use docker-compose to orchestrate Selenium Grid and tests
-                    sh 'docker-compose up --build --abort-on-container-exit --exit-code-from tests'
+                    // Use docker compose to orchestrate Selenium Grid and tests
+                    sh 'docker compose up --build --abort-on-container-exit --exit-code-from tests'
                 }
             }
             post {
                 always {
                     // Copy report from container
-                    sh 'docker cp $(docker-compose ps -q tests):/app/report.html . || true'
+                    sh 'docker cp $(docker compose ps -q tests):/app/report.html . || true'
                     // Clean up containers
-                    sh 'docker-compose down -v'
+                    sh 'docker compose down -v'
                 }
             }
         }
