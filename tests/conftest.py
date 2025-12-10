@@ -1,11 +1,10 @@
 """
 Pytest configuration file for Selenium tests
-Sets up Chrome driver with headless mode for CI/CD
+Sets up Firefox driver with headless mode for CI/CD
 """
 
 import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import sys
 import os
 
@@ -23,30 +22,27 @@ from config.config import (
 @pytest.fixture(scope="function")
 def driver():
     """
-    Pytest fixture to set up and tear down Chrome WebDriver
-    Configured for headless mode to run in Docker/Jenkins with privileged mode
+    Pytest fixture to set up and tear down Firefox WebDriver
+    Configured for headless mode to run in Docker/Jenkins
     """
-    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.firefox.options import Options
+    from selenium.webdriver.firefox.service import Service
     
-    chrome_options = Options()
+    firefox_options = Options()
     
-    # Essential options for headless Chrome
+    # Essential options for headless Firefox
     if HEADLESS:
-        chrome_options.add_argument("--headless=new")
+        firefox_options.add_argument("--headless")
     
-    # Minimal options for privileged Docker container
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument(f"--window-size={WINDOW_SIZE}")
-    
-    # Set binary location explicitly
-    chrome_options.binary_location = "/usr/bin/google-chrome"
+    # Set window size
+    firefox_options.add_argument(f"--width={WINDOW_SIZE.split(',')[0]}")
+    firefox_options.add_argument(f"--height={WINDOW_SIZE.split(',')[1]}")
     
     # Create service with explicit path
-    service = Service(executable_path="/usr/local/bin/chromedriver")
+    service = Service(executable_path="/usr/local/bin/geckodriver")
     
-    # Initialize Chrome driver with service
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    # Initialize Firefox driver with service
+    driver = webdriver.Firefox(service=service, options=firefox_options)
     
     # Set timeouts
     driver.implicitly_wait(IMPLICIT_WAIT)
