@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     environment {
-        APP_URL = 'http://localhost:5173'
-        API_URL = 'http://localhost:5000'
+        APP_URL = 'http://13.51.159.98:5173'
+        API_URL = 'http://13.51.159.98:5000'
     }
     
     stages {

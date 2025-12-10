@@ -1,10 +1,10 @@
 # Configuration for Selenium Tests
 
 # Application URL
-BASE_URL = "http://localhost:5173"
+BASE_URL = "http://13.51.159.98:5173"
 
 # API URL
-API_URL = "http://localhost:5000"
+API_URL = "http://13.51.159.98:5000"
 
 # Timeouts (in seconds)
 IMPLICIT_WAIT = 10
